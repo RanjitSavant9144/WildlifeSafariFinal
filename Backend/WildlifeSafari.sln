@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36705.20 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WildlifeSafari.AdminService", "WildlifeSafari.AdminService\WildlifeSafari.AdminService.csproj", "{77C6BFBD-82E2-DE9C-04B7-1D474963317F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WildlifeSafari.AuthService", "WildlifeSafari.AuthService\WildlifeSafari.AuthService.csproj", "{93DF81D1-1D08-4551-169A-C5C27D58CA89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WildlifeSafari.BookingService", "WildlifeSafari.BookingService\WildlifeSafari.BookingService.csproj", "{47127A1C-A5DB-16D3-E9C6-D59DEA3ECD92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WildlifeSafari.Shared", "WildlifeSafari.Shared\WildlifeSafari.Shared.csproj", "{133CA1A8-15F3-4849-72FE-99378569FA07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77C6BFBD-82E2-DE9C-04B7-1D474963317F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77C6BFBD-82E2-DE9C-04B7-1D474963317F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77C6BFBD-82E2-DE9C-04B7-1D474963317F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77C6BFBD-82E2-DE9C-04B7-1D474963317F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93DF81D1-1D08-4551-169A-C5C27D58CA89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93DF81D1-1D08-4551-169A-C5C27D58CA89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93DF81D1-1D08-4551-169A-C5C27D58CA89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93DF81D1-1D08-4551-169A-C5C27D58CA89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47127A1C-A5DB-16D3-E9C6-D59DEA3ECD92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47127A1C-A5DB-16D3-E9C6-D59DEA3ECD92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47127A1C-A5DB-16D3-E9C6-D59DEA3ECD92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47127A1C-A5DB-16D3-E9C6-D59DEA3ECD92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{133CA1A8-15F3-4849-72FE-99378569FA07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133CA1A8-15F3-4849-72FE-99378569FA07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133CA1A8-15F3-4849-72FE-99378569FA07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133CA1A8-15F3-4849-72FE-99378569FA07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6009F30B-F3E4-4CC9-B535-77BF4623A340}
+	EndGlobalSection
+EndGlobal

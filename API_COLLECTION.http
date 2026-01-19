@@ -1,0 +1,297 @@
+# Wildlife Safari API Collection
+# Use this with Postman, REST Client (VS Code), or any HTTP client
+
+### Variables
+@authBaseUrl = http://localhost:5001/api
+@bookingBaseUrl = http://localhost:5002/api
+@adminBaseUrl = http://localhost:5003/api
+@userToken = YOUR_USER_JWT_TOKEN_HERE
+@adminToken = YOUR_ADMIN_JWT_TOKEN_HERE
+
+###############################################
+# AUTHENTICATION SERVICE (Port 5001)
+###############################################
+
+### 1. User Registration
+POST {{authBaseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phoneNumber": "1234567890",
+  "password": "User@123"
+}
+
+### 2. User Login
+POST {{authBaseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "User@123"
+}
+
+### 3. Admin Login
+POST {{authBaseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@wildlifesafari.com",
+  "password": "Admin@123"
+}
+
+### 4. Get User by ID
+GET {{authBaseUrl}}/auth/users/1
+Authorization: Bearer {{userToken}}
+
+### 5. Get All Users
+GET {{authBaseUrl}}/auth/users
+Authorization: Bearer {{userToken}}
+
+###############################################
+# BOOKING SERVICE (Port 5002)
+###############################################
+
+### 6. Get Available Safari Slots
+GET {{bookingBaseUrl}}/booking/slots
+
+### 7. Get Available Slots from Specific Date
+GET {{bookingBaseUrl}}/booking/slots?fromDate=2025-12-24
+
+### 8. Get Slot by ID
+GET {{bookingBaseUrl}}/booking/slots/1
+
+### 9. Create Booking (Requires Authentication)
+POST {{bookingBaseUrl}}/booking/create
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "slotId": 1,
+  "numberOfPersons": 2,
+  "specialRequests": "Window seat preferred"
+}
+
+### 10. Process Payment (Requires Authentication)
+POST {{bookingBaseUrl}}/booking/payment
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "bookingId": 1,
+  "paymentMethod": "Credit Card",
+  "cardNumber": "1234567890123456",
+  "cardHolderName": "John Doe"
+}
+
+### 11. Get User's Bookings
+GET {{bookingBaseUrl}}/booking/user/bookings
+Authorization: Bearer {{userToken}}
+
+### 12. Get Booking by ID
+GET {{bookingBaseUrl}}/booking/bookings/1
+Authorization: Bearer {{userToken}}
+
+### 13. Get All Bookings (Admin Only)
+GET {{bookingBaseUrl}}/booking/all
+Authorization: Bearer {{adminToken}}
+
+### 14. Cancel Booking
+PUT {{bookingBaseUrl}}/booking/cancel/1
+Authorization: Bearer {{userToken}}
+
+###############################################
+# ADMIN SERVICE (Port 5003)
+###############################################
+
+### 15. Get All Wildlife Photos (Public)
+GET {{adminBaseUrl}}/admin/photos
+
+### 16. Create Wildlife Photo (Admin Only)
+POST {{adminBaseUrl}}/admin/photos
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Royal Bengal Tiger",
+  "description": "Majestic tiger in natural habitat",
+  "imageUrl": "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=800",
+  "category": "Tiger",
+  "displayOrder": 10
+}
+
+### 17. Update Wildlife Photo (Admin Only)
+PUT {{adminBaseUrl}}/admin/photos/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Bengal Tiger - Updated",
+  "description": "Updated description",
+  "imageUrl": "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=800",
+  "category": "Tiger",
+  "displayOrder": 1
+}
+
+### 18. Delete Wildlife Photo (Admin Only)
+DELETE {{adminBaseUrl}}/admin/photos/1
+Authorization: Bearer {{adminToken}}
+
+### 19. Get All Booking Rates (Public)
+GET {{adminBaseUrl}}/admin/rates
+
+### 20. Create Booking Rate (Admin Only)
+POST {{adminBaseUrl}}/admin/rates
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "rateName": "Weekend Safari",
+  "basePrice": 75.00,
+  "description": "Special weekend package"
+}
+
+### 21. Update Booking Rate (Admin Only)
+PUT {{adminBaseUrl}}/admin/rates/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "rateName": "Standard Safari - Updated",
+  "basePrice": 55.00,
+  "description": "Updated standard package"
+}
+
+### 22. Create Safari Slot (Admin Only)
+POST {{adminBaseUrl}}/admin/slots
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "slotName": "Morning Safari - Jan 01",
+  "slotDate": "2026-01-01",
+  "startTime": "06:00:00",
+  "endTime": "09:00:00",
+  "maxCapacity": 25,
+  "pricePerPerson": 60.00,
+  "description": "New Year special safari"
+}
+
+### 23. Update Safari Slot (Admin Only)
+PUT {{adminBaseUrl}}/admin/slots/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "slotName": "Morning Safari - Updated",
+  "slotDate": "2026-01-01",
+  "startTime": "06:00:00",
+  "endTime": "09:30:00",
+  "maxCapacity": 30,
+  "pricePerPerson": 65.00,
+  "description": "Updated safari details"
+}
+
+### 24. Delete Safari Slot (Admin Only)
+DELETE {{adminBaseUrl}}/admin/slots/15
+Authorization: Bearer {{adminToken}}
+
+###############################################
+# TEST SCENARIOS
+###############################################
+
+### Scenario 1: Complete User Journey
+# Step 1: Register new user (request #1)
+# Step 2: Copy token from response
+# Step 3: View available slots (request #6)
+# Step 4: Create booking (request #9) - use copied token
+# Step 5: Process payment (request #10) - use booking ID from step 4
+# Step 6: View booking history (request #11)
+
+### Scenario 2: Admin Management
+# Step 1: Login as admin (request #3)
+# Step 2: Copy admin token from response
+# Step 3: Add wildlife photo (request #16) - use admin token
+# Step 4: Create booking rate (request #20)
+# Step 5: Create safari slot (request #22)
+# Step 6: View all bookings (request #13)
+
+### Scenario 3: Booking Cancellation
+# Step 1: Login as user
+# Step 2: Create a booking
+# Step 3: Cancel the booking (request #14)
+# Step 4: Verify status changed
+
+###############################################
+# ERROR TESTING
+###############################################
+
+### Test 401 - Unauthorized (No Token)
+GET {{bookingBaseUrl}}/booking/user/bookings
+
+### Test 403 - Forbidden (User accessing Admin endpoint)
+POST {{adminBaseUrl}}/admin/photos
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Test",
+  "description": "Should fail",
+  "imageUrl": "http://test.com",
+  "category": "Test",
+  "displayOrder": 1
+}
+
+### Test 400 - Bad Request (Invalid Email)
+POST {{authBaseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "invalid-email",
+  "phoneNumber": "1234567890",
+  "password": "Test@123"
+}
+
+### Test 404 - Not Found (Invalid Slot ID)
+GET {{bookingBaseUrl}}/booking/slots/9999
+
+### Test Duplicate Registration
+POST {{authBaseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Admin",
+  "lastName": "User",
+  "email": "admin@wildlifesafari.com",
+  "phoneNumber": "1234567890",
+  "password": "Test@123"
+}
+
+###############################################
+# NOTES
+###############################################
+
+# How to use:
+# 1. Install REST Client extension in VS Code
+# 2. Open this file
+# 3. Click "Send Request" above any ### request
+# 4. Copy JWT tokens from login responses
+# 5. Replace @userToken and @adminToken variables
+
+# Postman Import:
+# 1. Save this file as .http
+# 2. Import into Postman as HTTP requests
+# 3. Create environment variables for tokens
+
+# Expected Response Codes:
+# 200 OK - Success
+# 201 Created - Resource created
+# 400 Bad Request - Validation error
+# 401 Unauthorized - Missing/invalid token
+# 403 Forbidden - Insufficient permissions
+# 404 Not Found - Resource not found
+# 500 Internal Server Error - Server error

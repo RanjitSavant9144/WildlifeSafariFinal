@@ -1,0 +1,30 @@
+[sqlfluff]
+dialect = tsql
+max_line_length = 88
+indent_unit = space
+indent_size = 4
+
+[sqlfluff:indentation]
+indented_joins = False
+indented_using_on = True
+
+[sqlfluff:core]
+# T-SQL specific
+capitalize = consistent
+use_space_around_operators = True
+
+[sqlfluff:rules]
+tab_space_size = 4
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = consistent
+
+[sqlfluff:rules:capitalisation.functions]
+capitalisation_policy = consistent
+
+[sqlfluff:rules:capitalisation.literal_types]
+capitalisation_policy = consistent
+
+[sqlfluff:rules:structure.type]
+# Force newlines after certain keywords
+operator_new_lines = after

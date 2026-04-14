@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
         </Link>
         <ul className="navbar-menu">
           <li>
-            <Link to="/" className="navbar-link">Home</Link>
+            <Link to="/" className="navbar-link">Home 1</Link>
           </li>
           {isAuthenticated ? (
             <>

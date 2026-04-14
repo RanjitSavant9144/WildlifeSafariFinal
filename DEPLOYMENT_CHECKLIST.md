@@ -12,7 +12,7 @@
 
 ### Step 1: Database Setup (5 minutes)
 
-1. Open SQL Server Management Studio (SSMS) or Azure Data Studio
+1. Open SQL Server  Management Studio (SSMS) or Azure Data Studio
 2. Connect to: `.\SQLEXPRESS`
 3. Execute scripts in order:
    ```

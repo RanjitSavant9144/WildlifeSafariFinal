@@ -30,7 +30,7 @@
 ### Database
 - **DBMS:** SQL Server Express
 - **Connection String:** `Server=.\\SQLEXPRESS;Database=WildlifeSafariDB;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true`
-- **Migration Tool:** Entity Framework Core Migrations
+- **Migration Tool:** Entity Framework  Core Migrations
 
 ### Development Environment
 - **.NET SDK:** 8.0+

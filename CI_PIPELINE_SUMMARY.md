@@ -19,7 +19,7 @@
 - `WildlifeSafari.AuthService` (Port 5001) - Authentication & User Management
 - `WildlifeSafari.BookingService` (Port 5002) - Safari Booking Management
 - `WildlifeSafari.AdminService` (Port 5003) - Admin Operations
-- `WildlifeSafari.Shared` - Shared Models and Utilities
+- `WildlifeSafari.Shared` -  Shared Models and Utilities
 
 **Frontend:**
 - React 18.2 + TypeScript 4.9.5

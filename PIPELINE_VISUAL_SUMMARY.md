@@ -28,7 +28,7 @@ Technology Stack:
 WildlifeSafariFinal/
 │
 ├── 📄 PROJECT_CONFIGURATION.md
-│   └─ Complete tech stack and architecture documentation
+│   └─ Complete tech stack  and architecture documentation
 │
 ├── 📄 CI_PIPELINE_GUIDE.md
 │   └─ Detailed guide on how to use and maintain CI/CD

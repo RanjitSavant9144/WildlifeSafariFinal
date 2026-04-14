@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document provides comprehensive testing procedures and deep-dive analysis of the Wildlife Safari Booking Application, a microservice-based web application built with React TypeScript frontend and C# .NET backend.
+This document provides comprehensive testing procedures and deep-dive analysis of the Wildlife Safari Booking Application, a microservice-based web application built with  React TypeScript frontend and C# .NET backend.
 
 ## Architecture Overview
 

@@ -134,7 +134,7 @@ namespace WildlifeSafari.AuthService.Services
                     LastName = u.LastName,
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
-                    Role = u.Role,
+                    Role = u.Role,    
                     IsActive = u.IsActive
                 })
                 .ToListAsync();

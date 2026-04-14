@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+Backend/WildlifeSafari.AdminService/WildlifeSafari.AdminService.csproj.lscache
+Backend/WildlifeSafari.AuthService/WildlifeSafari.AuthService.csproj.lscache
+Backend/WildlifeSafari.BookingService/WildlifeSafari.BookingService.csproj.lscache
+Backend/WildlifeSafari.Shared/WildlifeSafari.Shared.csproj.lscache

@@ -1,0 +1,102 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Validate PR title
+      run: |
+        PR_TITLE="${{ github.event.pull_request.title }}"
+        echo "PR Title: $PR_TITLE"
+        
+        # Check for common patterns
+        if [[ $PR_TITLE =~ ^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?:\s.+ ]]; then
+          echo "✓ PR title follows conventional commits"
+        else
+          echo "ℹ Consider using conventional commits format: type(scope): description"
+        fi
+
+    - name: Check for breaking changes
+      run: |
+        echo "Checking for potential breaking changes..."
+        if git log --oneline ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | grep -i "BREAKING CHANGE"; then
+          echo "⚠ Breaking changes detected in commit messages"
+        fi
+
+    - name: Verify affected files
+      run: |
+        echo "Affected files in this PR:"
+        git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
+
+    - name: Check commit message quality
+      run: |
+        echo "Validating commit messages..."
+        COMMIT_COUNT=$(git rev-list --count ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
+        echo "Number of commits: $COMMIT_COUNT"
+        
+        if [ "$COMMIT_COUNT" -gt 1 ]; then
+          echo "ℹ This PR has multiple commits. Consider squashing for cleaner history."
+        fi
+
+  check-file-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Detect changes by component
+      run: |
+        echo "=== Backend Changes ==="
+        git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- Backend/ || echo "No backend changes"
+        
+        echo ""
+        echo "=== Frontend Changes ==="
+        git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- Frontend/ || echo "No frontend changes"
+        
+        echo ""
+        echo "=== Database Changes ==="
+        git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- Database/ || echo "No database changes"
+
+    - name: Lint markdown files
+      uses: nosborn/github-action-markdown-cli@v3.3.0
+      with:
+        files: .
+        config_file: .markdownlint.json
+      continue-on-error: true
+
+  documentation-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check if docs updated with code changes
+      run: |
+        BACKEND_CHANGES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- Backend/ | wc -l)
+        FRONTEND_CHANGES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- Frontend/ | wc -l)
+        DOC_CHANGES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- "*.md" | wc -l)
+        
+        if [ "$BACKEND_CHANGES" -gt 0 ] || [ "$FRONTEND_CHANGES" -gt 0 ]; then
+          if [ "$DOC_CHANGES" -eq 0 ]; then
+            echo "⚠ Code changes detected but no documentation updated"
+            echo "Consider updating README.md or relevant docs"
+          else
+            echo "✓ Documentation potentially updated"
+          fi
+        fi

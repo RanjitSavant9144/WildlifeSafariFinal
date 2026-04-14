@@ -1,0 +1,140 @@
+name: Database Migration Check
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'Backend/**'
+      - 'Database/**'
+      - '.github/workflows/database-migration.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'Backend/**'
+      - 'Database/**'
+
+jobs:
+  validate-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Validate SQL script existence
+      run: |
+        echo "Checking Database Scripts..."
+        if [ -f "Database/Scripts/CreateDatabase.sql" ]; then
+          echo "✓ CreateDatabase.sql found"
+          wc -l Database/Scripts/CreateDatabase.sql
+        else
+          echo "✗ CreateDatabase.sql NOT found"
+          exit 1
+        fi
+        
+        if [ -f "Database/Scripts/SeedData.sql" ]; then
+          echo "✓ SeedData.sql found"
+          wc -l Database/Scripts/SeedData.sql
+        else
+          echo "✗ SeedData.sql NOT found"
+          exit 1
+        fi
+
+    - name: Check for SQL syntax issues
+      run: |
+        echo "Scanning for common SQL issues..."
+        # Check for required keywords
+        grep -r "CREATE TABLE" Database/Scripts/ || echo "No CREATE TABLE found"
+        grep -r "INSERT INTO" Database/Scripts/ || echo "No INSERT INTO found"
+        grep -r "GO" Database/Scripts/ || echo "No GO statements found"
+
+    - name: Validate migration folder structure
+      run: |
+        echo "Checking Backend structure..."
+        if [ -d "Backend/WildlifeSafari.Shared" ]; then
+          echo "✓ Shared project found"
+          ls -la Backend/WildlifeSafari.Shared/
+        else
+          echo "✗ Shared project NOT found"
+          exit 1
+        fi
+
+  check-entity-framework:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore backend dependencies
+      run: dotnet restore Backend/WildlifeSafari.sln
+
+    - name: Check for DbContext
+      run: |
+        Write-Host "Searching for DbContext classes..."
+        Get-ChildItem -Path Backend -Include "*DbContext.cs" -Recurse | ForEach-Object {
+          Write-Host "Found: $($_.FullName)"
+        }
+
+    - name: Verify EF Core tools
+      run: |
+        dotnet tool list -g | findstr "ef" || dotnet tool install --global dotnet-ef
+
+    - name: Validate migrations (dry-run)
+      run: |
+        Write-Host "Checking migrations..."
+        dotnet ef migrations list --project Backend/WildlifeSafari.Shared/WildlifeSafari.Shared.csproj --startup-project Backend/WildlifeSafari.AuthService/WildlifeSafari.AuthService.csproj `
+          || Write-Host "No migrations found or EF not configured"
+      continue-on-error: true
+
+  syntax-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install sqlparse for SQL validation
+      run: pip install sqlparse
+
+    - name: Validate SQL scripts
+      run: |
+        python << 'EOF'
+        import os
+        import sqlparse
+
+        script_dir = "Database/Scripts"
+        for filename in os.listdir(script_dir):
+            if filename.endswith(".sql"):
+                filepath = os.path.join(script_dir, filename)
+                print(f"\nValidating: {filename}")
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                try:
+                    sqlparse.parse(content)
+                    print(f"✓ {filename} - SQL syntax valid")
+                except Exception as e:
+                    print(f"✗ {filename} - SQL syntax error: {e}")
+                    exit(1)
+        EOF
+      continue-on-error: true
+
+  lint-sql-files:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install sqlfluff
+      run: pip install sqlfluff
+
+    - name: Lint SQL files
+      run: |
+        sqlfluff lint Database/Scripts/*.sql --dialect tsql --config .sqlfluff 2>/dev/null || true

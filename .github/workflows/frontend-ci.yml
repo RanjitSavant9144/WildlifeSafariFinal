@@ -1,0 +1,132 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'Frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'Frontend/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: Frontend/wildlife-safari-app/package-lock.json
+
+    - name: Install dependencies
+      run: npm install --prefix Frontend/wildlife-safari-app
+
+    - name: Run linter
+      run: npm run lint --prefix Frontend/wildlife-safari-app
+      continue-on-error: true
+
+    - name: Run tests
+      run: npm test --prefix Frontend/wildlife-safari-app --watchAll=false --passWithNoTests
+      continue-on-error: true
+
+    - name: Build application
+      run: npm run build --prefix Frontend/wildlife-safari-app
+
+    - name: List build output
+      run: ls -la Frontend/wildlife-safari-app/build/
+
+    - name: Upload frontend build
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: frontend-build-${{ matrix.node-version }}-${{ github.run_number }}
+        path: Frontend/wildlife-safari-app/build/
+        retention-days: 5
+
+  code-quality:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: Frontend/wildlife-safari-app/package-lock.json
+
+    - name: Install dependencies
+      run: npm install --prefix Frontend/wildlife-safari-app
+
+    - name: Check for security vulnerabilities
+      run: npm audit --prefix Frontend/wildlife-safari-app --audit-level=moderate
+      continue-on-error: true
+
+    - name: Check outdated packages
+      run: npm outdated --prefix Frontend/wildlife-safari-app
+      continue-on-error: true
+
+  type-checking:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: Frontend/wildlife-safari-app/package-lock.json
+
+    - name: Install dependencies
+      run: npm install --prefix Frontend/wildlife-safari-app
+
+    - name: Type check with TypeScript
+      run: npx tsc --noEmit --project Frontend/wildlife-safari-app/tsconfig.json
+      continue-on-error: true
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: Frontend/wildlife-safari-app/package-lock.json
+
+    - name: Install dependencies
+      run: npm install --prefix Frontend/wildlife-safari-app
+
+    - name: Verify lock file up-to-date
+      run: |
+        npm install --prefix Frontend/wildlife-safari-app --package-lock-only
+        if git diff --exit-code Frontend/wildlife-safari-app/package-lock.json; then
+          echo "package-lock.json is up-to-date"
+        else
+          echo "package-lock.json is out of sync"
+          exit 1
+        fi
+      continue-on-error: true

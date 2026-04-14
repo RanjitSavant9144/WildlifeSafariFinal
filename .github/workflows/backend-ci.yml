@@ -1,0 +1,122 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'Backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'Backend/**'
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    - name: Restore dependencies
+      run: dotnet restore Backend/WildlifeSafari.sln
+
+    - name: Build solution
+      run: dotnet build Backend/WildlifeSafari.sln --configuration Release --no-restore
+
+    - name: Check code formatting (optional)
+      continue-on-error: true
+      run: dotnet format Backend/WildlifeSafari.sln --verify-no-changes --verbosity diagnostic
+
+    - name: List built assemblies
+      run: |
+        Get-ChildItem -Path Backend -Include "*.dll" -Recurse | Select-Object FullName
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: backend-build-${{ github.run_number }}
+        path: Backend/*/bin/Release/
+        retention-days: 5
+
+  lint-analysis:
+    runs-on: windows-latest
+    continue-on-error: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install FxCop analyzer
+      run: dotnet add Backend/WildlifeSafari.AuthService/WildlifeSafari.AuthService.csproj package Microsoft.CodeAnalysis.NetAnalyzers
+
+    - name: Restore dependencies
+      run: dotnet restore Backend/WildlifeSafari.sln
+
+    - name: Run code analysis
+      run: |
+        dotnet build Backend/WildlifeSafari.sln `
+          --configuration Release `
+          --no-restore `
+          /p:EnableNETAnalyzers=true `
+          /p:TreatWarningsAsErrors=false
+
+  verify-package-refs:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: List NuGet packages
+      run: |
+        Get-ChildItem -Path Backend -Include "*.csproj" -Recurse | ForEach-Object {
+          Write-Host "Project: $($_.FullName)"
+          dotnet list "$($_.FullName)" package
+        }
+
+  build-docker:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    continue-on-error: true
+
+    strategy:
+      matrix:
+        service: ['AuthService', 'BookingService', 'AdminService']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image (without push)
+      uses: docker/build-push-action@v5
+      with:
+        context: ./Backend/WildlifeSafari.${{ matrix.service }}
+        file: ./Backend/WildlifeSafari.${{ matrix.service }}/Dockerfile
+        push: false
+        tags: wildlifesafari/${{ matrix.service }}:latest
+      continue-on-error: true

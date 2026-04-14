@@ -24,7 +24,7 @@ npm test --prefix Frontend/wildlife-safari-app --watchAll=false
 ```bash
 # Use conventional commit format
 git add .
-git commit -m "feat(booking): add payment gateway integration"
+git commit -m "feat(booking):  add payment gateway integration"
 git push origin your-branch
 ```
 

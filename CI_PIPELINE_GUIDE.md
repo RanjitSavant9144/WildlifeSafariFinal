@@ -10,7 +10,7 @@ This project uses **GitHub Actions** for continuous integration and continuous d
 
 ### 1. Backend CI/CD (`.github/workflows/backend-ci.yml`)
 
-**Trigger:** Push to `main` or `develop` branches, or PR targeting these branches (Backend files modified)
+**Trigger:** Push  to `main` or `develop` branches, or PR targeting these branches (Backend files modified)
 
 **Jobs:**
 - **build-and-test:** Builds the entire solution using .NET 8.0

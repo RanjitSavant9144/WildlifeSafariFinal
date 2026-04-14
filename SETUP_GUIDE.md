@@ -22,7 +22,7 @@ Before setting up the application, ensure you have the following installed:
 
 #### Option B: Using Entity Framework Migrations
 
-1. Open a terminal in the `Backend\WildlifeSafari.Shared` directory
+1. Open a terminal in  the `Backend\WildlifeSafari.Shared` directory
 2. Run the following commands:
 
 ```bash

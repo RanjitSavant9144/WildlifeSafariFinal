@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Booking, WildlifePhoto, BookingRate, SafariSlot, CreateWildlifePhotoDto, CreateBookingRateDto, CreateSafariSlotDto } from '../types';
@@ -43,15 +43,7 @@ const AdminDashboard: React.FC = () => {
     description: ''
   });
 
-  useEffect(() => {
-    if (!isAdmin) {
-      navigate('/');
-      return;
-    }
-    loadData();
-  }, [isAdmin, navigate, activeTab]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       if (activeTab === 'bookings') {
@@ -76,7 +68,15 @@ const AdminDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate('/');
+      return;
+    }
+    loadData();
+  }, [isAdmin, navigate, loadData]);
 
   const handleCreatePhoto = async (e: React.FormEvent) => {
     e.preventDefault();

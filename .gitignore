@@ -365,3 +365,15 @@ Backend/WildlifeSafari.AdminService/WildlifeSafari.AdminService.csproj.lscache
 Backend/WildlifeSafari.AuthService/WildlifeSafari.AuthService.csproj.lscache
 Backend/WildlifeSafari.BookingService/WildlifeSafari.BookingService.csproj.lscache
 Backend/WildlifeSafari.Shared/WildlifeSafari.Shared.csproj.lscache
+CI_PIPELINE_GUIDE.md
+CI_PIPELINE_GUIDE.md
+CI_PIPELINE_SUMMARY.md
+CI_QUICK_REFERENCE.md
+DEPLOYMENT_CHECKLIST.md
+FIX_ERRORS.md
+PIPELINE_VISUAL_SUMMARY.md
+PROJECT_CONFIGURATION.md
+SETUP_GUIDE.md
+TESTING_ANALYSIS.md
+SECURITY_FIX_SUMMARY.md
+Frontend/SECURITY_VULNERABILITIES_REPORT.md

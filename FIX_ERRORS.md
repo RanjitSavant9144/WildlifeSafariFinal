@@ -11,7 +11,7 @@ C:\Users\RanjitSambhajiSavant\source\repos\MyCodes\WildlifSafari\Frontend\wildli
 ```
 
 ### 2. Install npm dependencies
-Open a terminal in VS Code and run:
+Open a terminal in  VS Code and run:
 ```bash
 npm install
 ```

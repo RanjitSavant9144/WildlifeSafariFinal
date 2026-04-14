@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Booking, WildlifePhoto, BookingRate, SafariSlot, CreateWildlifePhotoDto, CreateBookingRateDto, CreateSafariSlotDto } from '../types';
@@ -43,41 +43,40 @@ const AdminDashboard: React.FC = () => {
     description: ''
   });
 
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      if (activeTab === 'bookings') {
+        const data = await api.getAllBookings();
+        setBookings(data);
+      } else if (activeTab === 'photos') {
+        const data = await api.getAllPhotos();
+        setPhotos(data);
+      } else if (activeTab === 'rates') {
+        const data = await api.getAllRates();
+        setRates(data);
+      } else if (activeTab === 'slots') {
+        const data = await api.getAvailableSlots();
+        setSlots(data);
+      }
+    } catch (error: any) {
+      console.error('Error loading data:', error);
+      const errorMessage = error.response?.data?.message 
+        || error.message 
+        || `Failed to load ${activeTab}. Please check if the backend service is running on port 5003.`;
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab]);
+
   useEffect(() => {
     if (!isAdmin) {
       navigate('/');
       return;
     }
-
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        if (activeTab === 'bookings') {
-          const data = await api.getAllBookings();
-          setBookings(data);
-        } else if (activeTab === 'photos') {
-          const data = await api.getAllPhotos();
-          setPhotos(data);
-        } else if (activeTab === 'rates') {
-          const data = await api.getAllRates();
-          setRates(data);
-        } else if (activeTab === 'slots') {
-          const data = await api.getAvailableSlots();
-          setSlots(data);
-        }
-      } catch (error: any) {
-        console.error('Error loading data:', error);
-        const errorMessage = error.response?.data?.message 
-          || error.message 
-          || `Failed to load ${activeTab}. Please check if the backend service is running on port 5003.`;
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadData();
-  }, [isAdmin, navigate, activeTab]);
+  }, [isAdmin, navigate, loadData]);
 
   const handleCreatePhoto = async (e: React.FormEvent) => {
     e.preventDefault();

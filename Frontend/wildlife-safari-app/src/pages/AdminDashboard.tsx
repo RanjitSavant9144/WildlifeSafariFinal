@@ -48,35 +48,36 @@ const AdminDashboard: React.FC = () => {
       navigate('/');
       return;
     }
+
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        if (activeTab === 'bookings') {
+          const data = await api.getAllBookings();
+          setBookings(data);
+        } else if (activeTab === 'photos') {
+          const data = await api.getAllPhotos();
+          setPhotos(data);
+        } else if (activeTab === 'rates') {
+          const data = await api.getAllRates();
+          setRates(data);
+        } else if (activeTab === 'slots') {
+          const data = await api.getAvailableSlots();
+          setSlots(data);
+        }
+      } catch (error: any) {
+        console.error('Error loading data:', error);
+        const errorMessage = error.response?.data?.message 
+          || error.message 
+          || `Failed to load ${activeTab}. Please check if the backend service is running on port 5003.`;
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadData();
   }, [isAdmin, navigate, activeTab]);
-
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      if (activeTab === 'bookings') {
-        const data = await api.getAllBookings();
-        setBookings(data);
-      } else if (activeTab === 'photos') {
-        const data = await api.getAllPhotos();
-        setPhotos(data);
-      } else if (activeTab === 'rates') {
-        const data = await api.getAllRates();
-        setRates(data);
-      } else if (activeTab === 'slots') {
-        const data = await api.getAvailableSlots();
-        setSlots(data);
-      }
-    } catch (error: any) {
-      console.error('Error loading data:', error);
-      const errorMessage = error.response?.data?.message 
-        || error.message 
-        || `Failed to load ${activeTab}. Please check if the backend service is running on port 5003.`;
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCreatePhoto = async (e: React.FormEvent) => {
     e.preventDefault();
